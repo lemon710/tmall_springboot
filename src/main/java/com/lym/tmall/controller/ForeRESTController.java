@@ -1,20 +1,16 @@
 package com.lym.tmall.controller;
 
-import com.lym.tmall.pojo.Category;
-import com.lym.tmall.pojo.User;
-import com.lym.tmall.service.CategoryService;
-import com.lym.tmall.service.ProductService;
-import com.lym.tmall.service.UserService;
+import com.lym.tmall.pojo.*;
+import com.lym.tmall.service.*;
 import com.lym.tmall.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class ForeRESTController {
@@ -24,6 +20,14 @@ public class ForeRESTController {
     ProductService productService;
     @Autowired
     UserService userService;
+    @Autowired
+    ProductImageService productImageService;
+    @Autowired
+    PropertyValueService propertyValueService;
+    @Autowired
+    OrderItemService orderItemService;
+    @Autowired
+    ReviewService reviewService;
 
     @GetMapping("/forehome")
     public Object home() {
@@ -68,5 +72,27 @@ public class ForeRESTController {
             session.setAttribute("user", user);
             return Result.success();
         }
+    }
+
+    @GetMapping("/foreproduct/{pid}")
+    public Object product(@PathVariable("pid") int pid) {
+        Product product = productService.get(pid);
+
+        List<ProductImage> productSingleImages = productImageService.listSingleProductImages(product);
+        List<ProductImage> productDetailImages = productImageService.listDetailProductImages(product);
+        product.setProductSingleImages(productSingleImages);
+        product.setProductDetailImages(productDetailImages);
+
+        List<PropertyValue> pvs = propertyValueService.list(product);
+        List<Review> reviews = reviewService.list(product);
+        productService.setSaleAndReviewNumber(product);
+        productImageService.setFirstProductImage(product);
+
+        Map<String,Object> map= new HashMap<>();
+        map.put("product", product);
+        map.put("pvs", pvs);
+        map.put("reviews", reviews);
+
+        return Result.success(map);
     }
 }
