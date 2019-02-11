@@ -95,4 +95,12 @@ public class ForeRESTController {
 
         return Result.success(map);
     }
+
+    @GetMapping("forecheckLogin")
+    public Object checkLogin( HttpSession session) {
+        User user =(User)  session.getAttribute("user");
+        if(null!=user)
+            return Result.success();
+        return Result.fail("未登录");
+    }
 }
