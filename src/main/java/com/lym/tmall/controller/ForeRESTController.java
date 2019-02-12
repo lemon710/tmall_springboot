@@ -147,4 +147,37 @@ public class ForeRESTController {
         productService.setSaleAndReviewNumber(ps);
         return ps;
     }
+
+    @GetMapping("forebuyone")
+    public Object buyone(int pid, int num, HttpSession session) {
+        return buyoneAndAddCart(pid,num,session);
+    }
+
+    private int buyoneAndAddCart(int pid, int num, HttpSession session) {
+        Product product = productService.get(pid);
+        int oiid = 0;
+
+        User user =(User)  session.getAttribute("user");
+        boolean found = false;
+        List<OrderItem> ois = orderItemService.listByUser(user);
+        for (OrderItem oi : ois) {
+            if(oi.getProduct().getId()==product.getId()){
+                oi.setNumber(oi.getNumber()+num);
+                orderItemService.update(oi);
+                found = true;
+                oiid = oi.getId();
+                break;
+            }
+        }
+
+        if(!found){
+            OrderItem oi = new OrderItem();
+            oi.setUser(user);
+            oi.setProduct(product);
+            oi.setNumber(num);
+            orderItemService.add(oi);
+            oiid = oi.getId();
+        }
+        return oiid;
+    }
 }

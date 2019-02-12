@@ -4,6 +4,7 @@ import com.lym.tmall.dao.OrderItemDAO;
 import com.lym.tmall.pojo.Order;
 import com.lym.tmall.pojo.OrderItem;
 import com.lym.tmall.pojo.Product;
+import com.lym.tmall.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,6 +46,10 @@ public class OrderItemService {
         orderItemDAO.delete(id);
     }
 
+    public void update(OrderItem orderItem) {
+        orderItemDAO.save(orderItem);
+    }
+
     public int getSaleCount(Product product) {
         List<OrderItem> ois =listByProduct(product);
         int result =0;
@@ -61,5 +66,9 @@ public class OrderItemService {
     }
     public List<OrderItem> listByOrder(Order order) {
         return orderItemDAO.findByOrderOrderByIdDesc(order);
+    }
+
+    public List<OrderItem> listByUser(User user) {
+        return orderItemDAO.findByUserAndOrderIsNull(user);
     }
 }
