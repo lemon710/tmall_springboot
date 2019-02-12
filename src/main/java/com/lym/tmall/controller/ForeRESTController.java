@@ -9,10 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 
 import javax.servlet.http.HttpSession;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 public class ForeRESTController {
@@ -179,5 +176,27 @@ public class ForeRESTController {
             oiid = oi.getId();
         }
         return oiid;
+    }
+
+    @GetMapping("forebuy")
+    public Object buy(String[] oiid,HttpSession session){
+        List<OrderItem> orderItems = new ArrayList<>();
+        float total = 0;
+
+        for (String strid : oiid) {
+            int id = Integer.parseInt(strid);
+            OrderItem oi= orderItemService.get(id);
+            total +=oi.getProduct().getPromotePrice()*oi.getNumber();
+            orderItems.add(oi);
+        }
+
+        productImageService.setFirstProdutImagesOnOrderItems(orderItems);
+
+        session.setAttribute("ois", orderItems);
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("orderItems", orderItems);
+        map.put("total", total);
+        return Result.success(map);
     }
 }

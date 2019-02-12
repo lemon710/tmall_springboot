@@ -2,6 +2,7 @@ package com.lym.tmall.service;
 
 
 import com.lym.tmall.dao.ProductImageDAO;
+import com.lym.tmall.pojo.OrderItem;
 import com.lym.tmall.pojo.Product;
 import com.lym.tmall.pojo.ProductImage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,12 @@ public class ProductImageService   {
     public void setFirstProductImages(List<Product> products) {
         for (Product product : products)
             setFirstProductImage(product);
+    }
+
+    public void setFirstProdutImagesOnOrderItems(List<OrderItem> ois) {
+        for (OrderItem orderItem : ois) {
+            setFirstProductImage(orderItem.getProduct());
+        }
     }
 
 }
