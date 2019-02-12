@@ -199,4 +199,10 @@ public class ForeRESTController {
         map.put("total", total);
         return Result.success(map);
     }
+
+    @GetMapping("foreaddCart")
+    public Object addCart(int pid, int num, HttpSession session) {
+        buyoneAndAddCart(pid,num,session);
+        return Result.success();
+    }
 }
