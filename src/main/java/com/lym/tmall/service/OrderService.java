@@ -3,6 +3,7 @@ package com.lym.tmall.service;
 import com.lym.tmall.dao.OrderDAO;
 import com.lym.tmall.pojo.Order;
 import com.lym.tmall.pojo.OrderItem;
+import com.lym.tmall.pojo.User;
 import com.lym.tmall.util.Page4Navigator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -73,5 +74,15 @@ public class OrderService {
     }
     public void add(Order order) {
         orderDAO.save(order);
+    }
+
+    public List<Order> listByUserWithoutDelete(User user) {
+        List<Order> orders = listByUserAndNotDeleted(user);
+        orderItemService.fill(orders);
+        return orders;
+    }
+
+    public List<Order> listByUserAndNotDeleted(User user) {
+        return orderDAO.findByUserAndStatusNotOrderByIdDesc(user, OrderService.delete);
     }
 }
